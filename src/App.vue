@@ -1,28 +1,51 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header v-show="bNav" />
+    <Tab v-show="bTab" />
+    <router-view></router-view>
+    <Loading v-show='bLoading'/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import * as types from "./store/types";
+import { mapState } from "vuex";
+import Header from "./layouts/header.vue";
+import Tab from "./layouts/tab.vue";
+import Loading from './components/loading'
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Header,
+    Tab,
+    Loading
+  },
+  methods: {},
+  watch: {
+    $route: {
+      handler(to) {
+        let path = to.path;
+        if (/home|rank|user/.test(path)) {
+          this.$store.commit(types.NAV, true);
+          this.$store.commit(types.TAB, true);
+        }
+        if (/detail/.test(path)) {
+          this.$store.commit(types.NAV, false);
+          this.$store.commit(types.TAB, false);
+        }
+      }
+    },
+    bNav(news,old){
+       window.localStorage.setItem('bNav',news)
+    },
+    bTab(news,old){
+       window.localStorage.setItem('bTab',news)
+    }
+
+  },
+  computed:mapState(['bNav','bTab','bLoading'])
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
